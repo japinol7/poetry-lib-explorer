@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Poetry Library - Books</h1>
+
+    <div class="body">
+        <br>
+        <form class="poetry-lib-form-class" id="poetry_lib_form"
+              action="/poetry-lib-books" method="POST" style="background:#b2c8f6;max-width: 700px;">
+            <div class="row">
+                    <div class="col">
+                        <p><strong>Search Books <br> </strong> </p>
+                        <p><strong>Title to search</strong></p>
+                        <input name="poetry_book_name" id="poetry_book_name" type="text"
+                               placeholder="Eg: Vol. II">
+                        <p><strong>Match Book name method</strong></p>
+                        <select name="poetry_book_title_method" id="poetry_book_title_method" type="text" required>
+                            <option value="">&lt;Select a method&gt;</option>
+                            <option value="book_exact_match">Exact Match</option>
+                            <option value="book_starts_with">Starts with specified text</option>
+                            <option value="book_contains" selected>Contains specified text</option>
+                        </select>
+                        <p><strong>Start date</strong></p>
+                        <input name="poetry_book_start_date" id="poetry_book_start_date" type="text"
+                               placeholder="Eg: 2021-01-01">
+                        <p><strong>End date</strong></p>
+                        <input name="poetry_book_end_date" id="poetry_book_end_date" type="text"
+                               placeholder="Eg: 2021-01-02">
+                        <p><strong>Max. books to fetch (max. 3000)</strong></p>
+                        <input name="poetry_book_limit" id="poetry_book_limit" type="number"
+                               placeholder="Eg: 200" value="100" required min="1" max="3000">
+                    </div>
+                    <div class="col">
+                        <p style="color:transparent">.</p> <p style="color:transparent">.</p><p style="color:transparent">.</p>
+                        <p><strong>Book Author contains</strong></p>
+                        <input name="poetry_book_author" id="poetry_book_author" type="text"
+                               placeholder="Eg: JAP">
+                        <p><strong>Poem name contains</strong></p>
+                        <input name="poetry_poem_name" id="poetry_poem_name" type="text"
+                               placeholder="Eg: Amaneceres">
+                        <p><strong>Author contains</strong></p>
+                        <input name="poetry_author_name" id="poetry_author_name" type="text"
+                               placeholder="Eg: JAP">
+                        <p><strong>Language is</strong></p>
+                        <select name="poetry_language" id="poetry_language" type="text" required>
+                            <option value="All" selected>All</option>
+                            <option value="English">English</option>
+                            <option value="Spanish">Spanish</option>
+                            <option value="Catalan">Catalan</option>
+                        </select>
+                        <p><strong>Order by</strong></p>
+                        <select name="poetry_book_order_by" id="poetry_book_order_by" type="text" required>
+                            <option value="bookName">book Name</option>
+                            <option value="author,bookName" selected>Book Author, book Name</option>
+                            <option value="size_chars,bookName">Size desc, book</option>
+                            <option value="year,bookName">Year, book</option>
+                        </select>
+                    </div>
+            </div>
+            <button class="submit-poetry-books">Submit</button>
+            <button type="button" onclick="toggleDisplay()">Show/Hide Import Form</button>
+        </form>
+
+        <form class="poetry-lib-import-data-form-class hide-on-condition"
+              id="poetry_lib_import_data_form"
+              action="/poetry-lib-books" method="POST" style="background:#ffdf7d;max-width: 700px;display:none;">
+            <p><strong>Import poetry library data <br> </strong> </p>
+            <p><strong>Only if it is not already imported in your system</strong></p>
+            <input name="import_data_method" id="import_data_method" type="text" value="all" style="display:none">
+            <button class="import-data" style="background:#ffa04c">Import data</button>
+        </form>
+    </div>
+
+    <div class="body">
+        <br>
+        <div class="poetry-lib-info">
+            <p>
+                <strong> Fetch books from poetry library database.</strong> <br>
+            </p>
+            <p>
+                {%  if form_executed == 'poetry_lib_form' %}
+                        # books which title <strong>{{ books[0] and books[0][0] or '--' }}</strong> ,
+                    match method: <strong>{{ books[0] and books[0][4] or '' }}</strong> ,
+                    book author: <strong>{{ books[0] and books[0][11] or '--' }}</strong> ,
+                    book_editor: <strong>{{ books[0] and books[0][9] or '--' }}</strong> ,
+                    author: <strong>{{ books[0] and books[0][6] or '--' }}</strong> ,
+                    language: <strong>{{ books[0] and books[0][10] or '--' }}</strong> ,
+                    limit: <strong>{{ books[0] and books[0][1] or '--' }}</strong> ,
+                    dates: (<strong>{{ books[0] and books[0][2] or '--' }}, {{ books[0] and books[0][3] or '--' }}</strong>) ,
+                    order by: <strong>{{ books[0] and books[0][5] or '--' }}</strong>
+                    matches found in
+                {% else %}
+                        # books which title that starts with <strong> __ </strong>
+                {% endif %}
+                <span >our database</span>
+                :
+                <strong>{{ books[1] }}</strong> of <strong>{{ books[0] and books[0][8] or 0}}</strong>.
+            </p>
+        </div>
+
+        {% if books and books[4]['error'] %}
+            <div class="poetry-list-api-call-error">
+                <br>
+                <p><strong>API Error:  {{ books[4]['error'] }} </strong> </p>
+                <br>
+            </div>
+        {% endif %}
+
+        <table class="mui-table mui-table--bordered">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>Book Author</th>
+                <th>Book</th>
+                <th>Poems Count</th>
+                <th>Poems</th>
+                <th>Size (bytes)</th>
+                <th>Year min</th>
+                <th>Year max</th>
+                <th>Language</th>
+                <th>Poems Authors</th>
+                <th>Pages</th>
+                <th>Book Editor</th>
+            </tr>
+            </thead>
+            {% if books and books[3] %}
+                <tbody>
+                {% for item in books[3] %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.author }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.poem_count }}</td>
+                        <td style="white-space:pre-wrap;width:600px;max-width:600px;min-width:400px;">{{ item.poem_names }}</td>
+                        <td>{{ item.size_chars }}</td>
+                        <td>{{ item.year }}</td>
+                        <td>{{ item.year_max }}</td>
+                        <td>{{ item.language }}</td>
+                        <td>{{ item.author_poems }}</td>
+                        <td>{{ item.pages }}</td>
+                        <td>{{ item.book_editor }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+		    {% else %}
+                <tbody>
+                <tr>
+                        <td></td>     <td></td>     <td></td>     <td></td>
+                        <td></td>     <td></td>     <td></td>     <td></td>
+                        <td></td>     <td></td>     <td></td>
+                </tr>
+                </tbody>
+		    {% endif %}
+        </table>
+    </div>
+{% endblock %}

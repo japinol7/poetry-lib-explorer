@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Poetry Library - Poems</h1>
+
+    <div class="body">
+        <br>
+        <form class="poetry-lib-form-class" id="poetry_lib_form"
+              action="/poetry-lib-poems" method="POST" style="background:#b2c8f6;max-width: 700px;">
+            <div class="row">
+                    <div class="col">
+                        <p><strong>Search Poems <br> </strong> </p>
+                        <p><strong>Title to search</strong></p>
+                        <input name="poetry_poem_title" id="poetry_poem_title" type="text"
+                               placeholder="Eg: It's hard to be so far">
+                        <p><strong>Match Poem name method</strong></p>
+                        <select name="poetry_poem_title_method" id="poetry_poem_title_method" type="text" required>
+                            <option value="">&lt;Select a method&gt;</option>
+                            <option value="poem_exact_match">Exact Match</option>
+                            <option value="poem_starts_with">Starts with specified text</option>
+                            <option value="poem_contains" selected>Contains specified text</option>
+                        </select>
+                        <p><strong>Start date</strong></p>
+                        <input name="poetry_poem_start_date" id="poetry_poem_start_date" type="text"
+                               placeholder="Eg: 2021-01-01">
+                        <p><strong>End date</strong></p>
+                        <input name="poetry_poem_end_date" id="poetry_poem_end_date" type="text"
+                               placeholder="Eg: 2021-01-02">
+                        <p><strong>Max. poems to fetch (max. 5000)</strong></p>
+                        <input name="poetry_poem_limit" id="poetry_poem_limit" type="number"
+                               placeholder="Eg: 25" value="50" required min="1" max="5000">
+                        <p><strong>Is added auto. or by user</strong></p>
+                        <select name="poetry_poem_user_added" id="poetry_poem_user_added"  type="text" required>
+                            <option value="Added by user">Added by user</option>
+                            <option value="All" selected>All</option>
+                            <option value="Automatically added">Automatically added</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <p style="color:transparent">.</p>
+                        <p><strong>Book Author contains</strong></p>
+                        <input name="poetry_book_author" id="poetry_book_author" type="text"
+                               placeholder="Eg: JAP">
+                        <p><strong>Book title contains</strong></p>
+                        <input name="poetry_book_name" id="poetry_book_name" type="text"
+                               placeholder="Eg: Vol. II">
+                        <p><strong>Poem Body contains</strong></p>
+                        <input name="poetry_poem_body" id="poetry_poem_body" type="text"
+                               placeholder="Eg: if only I could breathe a sigh">
+                        <p><strong>Author contains</strong></p>
+                        <input name="poetry_author_name" id="poetry_author_name" type="text"
+                               placeholder="Eg: JAP">
+                        <p><strong>Language is</strong></p>
+                        <select name="poetry_language" id="poetry_language" type="text" required>
+                            <option value="All" selected>All</option>
+                            <option value="English">English</option>
+                            <option value="Spanish">Spanish</option>
+                            <option value="Catalan">Catalan</option>
+                        </select>
+                        <p><strong>Order by</strong></p>
+                        <select name="poetry_poem_order_by" id="poetry_poem_order_by" type="text" required>
+                            <option value="poemName">Poem Name</option>
+                            <option value="author,poemName">Author, Poem Name</option>
+                            <option value="author,book,poemName">Author, Book, Poem Name</option>
+                            <option value="book,poemName">Book, Poem Name</option>
+                            <option value="read_count,author,poemName" selected>Read_count desc, Poem</option>
+                            <option value="size_chars,poemName">Size desc, Poem</option>
+                            <option value="year,poemName">Year, Poem Name</option>
+                        </select>
+                    </div>
+            </div>
+            <button class="submit-poetry-poems">Submit</button>
+            <button type="button" onclick="toggleDisplay()">Show/Hide Import Form</button>
+        </form>
+
+        <form class="poetry-lib-import-data-form-class hide-on-condition"
+              id="poetry_lib_import_data_form"
+              action="/poetry-lib-poems" method="POST" style="background:#ffdf7d;max-width: 700px;display:none;">
+            <p><strong>Import poetry library data <br> </strong> </p>
+            <p><strong>Only if it is not already imported in your system</strong></p>
+            <input name="import_data_method" id="import_data_method" type="text" value="all" style="display:none">
+            <button class="import-data" style="background:#ffa04c">Import data</button>
+        </form>
+    </div>
+
+    <div class="body">
+        <br>
+        <div class="poetry-lib-info">
+            <p>
+                <strong> Fetch poems from poetry library database.</strong> <br>
+            </p>
+            <p>
+                {%  if form_executed == 'poetry_lib_form' %}
+                        # Poems which title <strong>{{ poems[0] and poems[0][0] or '--' }}</strong> ,
+                    match method: <strong>{{ poems[0] and poems[0][4] or '' }}</strong> ,
+                    book: <strong>{{ poems[0] and poems[0][7] or '--' }}</strong> ,
+                    book author: <strong>{{ poems[0] and poems[0][9] or '--' }}</strong> ,
+                    author: <strong>{{ poems[0] and poems[0][6] or '--' }}</strong> ,
+                    language: <strong>{{ poems[0] and poems[0][12] or '--' }}</strong> ,
+                    body: <strong>{{ poems[0] and poems[0][11] or '--' }}</strong> ,
+                    limit: <strong>{{ poems[0] and poems[0][1] or '--' }}</strong> ,
+                    added by: <strong>{{ poems[0] and poems[0][10] or '--' }}</strong> ,
+                    dates: (<strong>{{ poems[0] and poems[0][2] or '--' }}, {{ poems[0] and poems[0][3] or '--' }}</strong>) ,
+                    order by: <strong>{{ poems[0] and poems[0][5] or '--' }}</strong>
+                    matches found in
+                {% else %}
+                        # Poems which title that starts with <strong> __ </strong>
+                {% endif %}
+                <span >our database</span>
+                :
+                <strong>{{ poems[1] }}</strong> of <strong>{{ poems[0] and poems[0][8] or 0}}</strong>.
+            </p>
+        </div>
+
+        {% if poems and poems[4]['error'] %}
+            <div class="poetry-list-api-call-error">
+                <br>
+                <p><strong>API Error:  {{ poems[4]['error'] }} </strong> </p>
+                <br>
+            </div>
+        {% else %}
+            <div class="poetry-list-api-call-warning">
+                <br>
+                <p><strong>Disclaimer: Sorry, the Download button is currently deactivated. <br>
+                   </strong> </p>
+                <br>
+            </div>
+        {% endif %}
+
+        <table class="mui-table mui-table--bordered">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>Poem</th>
+                <th>Body</th>
+                <th></th>
+                <th>Author</th>
+                <th>Book</th>
+                <th>Year</th>
+                <th>Read_count</th>
+                <th>Size (chars)</th>
+                <th>Language</th>
+                <th>Book Author</th>
+                <th>book_editor</th>
+                <th>Date Released</th>
+                <th>Comments</th>
+                <th>Date Added</th>
+                <th>Is UserAdded</th>
+            </tr>
+            </thead>
+            {% if poems and poems[3] %}
+                <tbody>
+                {% for item in poems[3] %}
+                    <tr>
+                        <td>{{ item.poem_id }}</td>
+                        <td>{{ item.name }}</td>
+                        <td style="white-space:pre-wrap;width:600px;max-width:600px;min-width:400px;">{{ item.body_short }}</td>
+                        <td>
+                            <form action="/poetry-lib-poems" id="poetry_poem_copy_body_form" method="POST">
+                                <input id="poetry_poem_full_body" name="poetry_poem_full_body" type="hidden"
+                                       value="{{ item.body }}">
+                                <input id="poetry_poem_cp_title" name="poetry_poem_cp_title" type="hidden"
+                                       value="{{ item.name }}">
+                                <input id="poetry_poem_cp_year" name="poetry_poem_cp_year" type="hidden"
+                                       value="{{ item.year }}">
+                                <input id="poetry_author_cp_name" name="poetry_author_cp_name" type="hidden"
+                                       value="{{ item.author }}">
+                                <button type="submit">Copy Poem</button>
+                            </form>
+                        </td>
+                        <td>{{ item.author }}</td>
+                        <td>{{ item.book.name }}</td>
+                        <td>{{ item.year }}</td>
+                        <td>{{ item.read_count }}</td>
+                        <td>{{ item.size_chars }}</td>
+                        <td>{{ item.language }}</td>
+                        <td>{{ item.book.author }}</td>
+                        <td>{{ item.book_editor }}</td>
+                        <td>{{ item.date_released }}</td>
+                        <td>{{ item.comments }}</td>
+                        <td>{{ item.date_added }}</td>
+                        <td>{{ item.is_user_added }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+		    {% else %}
+                <tbody>
+                <tr>
+                        <td></td>     <td></td>     <td></td>     <td></td>
+                        <td></td>     <td></td>     <td></td>     <td></td>
+                        <td></td>     <td></td>     <td></td>     <td></td>
+                        <td></td>     <td></td>     <td></td>     <td></td>
+                </tr>
+                </tbody>
+		    {% endif %}
+        </table>
+    </div>
+{% endblock %}
