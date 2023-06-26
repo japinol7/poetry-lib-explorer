@@ -126,3 +126,4 @@ ENV/
 /app/db/hover_share.sqlite
 /app/db/hover_share.sqlite-journal
 /app/resources/data/music_dig_lib.csv
+/app/resources/data/poetry_dig_lib.csv
