@@ -81,3 +81,9 @@ def get_poetry_poems(all_poems=False, name=None, author=None, book=None, book_au
 
     poems = poems.all()
     return poems if poems else []
+
+
+def get_music_poems_to_export():
+    poems = get_poetry_poems(all_poems=True)
+    poems = poems.order_by(Poem.read_count.desc(), Poem.author, Poem.name, Poem.year)
+    return poems if poems else []

@@ -74,3 +74,43 @@ FILE_LOCATION_REPLACE = FileLocationReplace('', '')
 ALLOW_TO_IMPORT_SEVERAL_FILES = False
 IS_USER_ADDED = False
 # End Adjustments to a particular dataset
+
+# Poems export settings
+POEMS_EXPORT_FILE_NAME = 'poems_report.xlsx'
+POEMS_EXPORT_FIELD_NORMAL_WIDTH = 17
+poems_export_field_titles = namedtuple('poems_export_field_titles', ['name', 'width'])
+POEMS_EXPORT_FIELD_TITLES = [
+    poems_export_field_titles('id', 12),
+    poems_export_field_titles('poem_id', 12),
+    poems_export_field_titles('poem_name', 57),
+    poems_export_field_titles('author', 44),
+    poems_export_field_titles('year', 12),
+    poems_export_field_titles('read_count', 16),
+    poems_export_field_titles('size_chars', 16),
+    poems_export_field_titles('language', 22),
+    poems_export_field_titles('body', 81),
+    poems_export_field_titles('book_name', 70),
+    poems_export_field_titles('book_author', 47),
+    poems_export_field_titles('book_editor', 44),
+    poems_export_field_titles('book_number', 47),
+    poems_export_field_titles('book_count', 16),
+    poems_export_field_titles('book_size_chars', 16),
+    poems_export_field_titles('book_pages', 16),
+    poems_export_field_titles('location', 60),
+    poems_export_field_titles('date_released', 16),
+    poems_export_field_titles('date_added', 16),
+    poems_export_field_titles('date_modified', 16),
+    poems_export_field_titles('date_imported', 16),
+    poems_export_field_titles('comments', 70),
+    poems_export_field_titles('poem_number', 16),
+    poems_export_field_titles('book_poem_count', 16),
+    poems_export_field_titles('is_user_added', 16),
+    ]
+EXPORT_FILE_PROPERTIES = {
+    'title': 'Poem list report from PoetryLME',
+    'subject': 'Poem list report from PoetryLME',
+    'author': 'Poetry Library Metadata Explorer - PoetryLME',
+    'keywords': 'poem, MusicLME',
+    'comments': 'Created with Poetry Library Metadata Explorer',
+    }
+EXPORT_FILE_MIMETYPE = 'application/xlsx'
