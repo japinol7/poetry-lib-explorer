@@ -4,9 +4,21 @@
     <h1>Poetry Library - Settings</h1>
 
     <div class="mui-panel">
+        <br>
+        <h3>Export poetry data</h3> <br>
         <p>
-            <button class="mui-btn mui-btn--raised"><a href="/export_poems_report">Export poems</a></button>
+            <button class="mui-btn mui-btn--raised"><a href="/export_poems_report"
+            >Export poems to Excel</a></button>
         <p>
+        <br>
+
+        {% if is_error %}
+            <div class="poetry-list-api-call-error">
+                <p> <br>
+                    <strong>{{ error_msg }}</strong>
+                <p> <br>
+            </div>
+        {% endif %}
     </div>
 
 {% endblock %}
