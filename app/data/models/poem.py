@@ -19,7 +19,7 @@ class Poem(SqlAlchemyBase):
     book_id = sqlalchemy.Column(
         sqlalchemy.Integer,
         sqlalchemy.ForeignKey('book.id'))
-    book = relationship('Book', back_populates='poems', lazy='joined')
+    book = relationship('Book', back_populates='poems')
 
     # Normal columns
     name = sqlalchemy.Column(sqlalchemy.String, nullable=True, index=True)
