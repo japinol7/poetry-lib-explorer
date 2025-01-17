@@ -1,7 +1,7 @@
 import datetime
 
 import sqlalchemy
-from sqlalchemy import orm
+from sqlalchemy.orm import relationship
 
 from app.data.sqlalchemybase import SqlAlchemyBase
 
@@ -19,7 +19,7 @@ class Poem(SqlAlchemyBase):
     book_id = sqlalchemy.Column(
         sqlalchemy.Integer,
         sqlalchemy.ForeignKey('book.id'))
-    book = orm.relation('Book', back_populates='poems')
+    book = relationship('Book', back_populates='poems', lazy='joined')
 
     # Normal columns
     name = sqlalchemy.Column(sqlalchemy.String, nullable=True, index=True)
